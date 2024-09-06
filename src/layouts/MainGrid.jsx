@@ -7,21 +7,18 @@ import Sales from "../pages/reports/Sales";
 import Cancelled from "../pages/reports/Cancelled";
 
 export default function MainGrid({selectedComponent}) {
-  
-
   const data = [
     { idCom:1, name: "Ventas", component: Sales, icon: AttachMoneyIcon },
     { idCom:2, name: "Ventas Canceladas", component: Cancelled, icon: AttachMoneyIcon },
     // { idCom:3, name: "Ventas Validadas", component: Validadas, icon: AttachMoneyIcon },
-  ]
+  ];
   const selectedData = data.find((item) => item.idCom === selectedComponent);
-
   const ComponentToRender = selectedData ? selectedData.component : null;
 
   return (
     <Box sx={{ width: '100%', maxWidth: { sm: '100%', md: '1700px' } }}>
       <Typography component="h2" variant="h6" sx={{ mb: 2 }}>
-      {selectedComponent}
+        {selectedComponent}
       </Typography>
       <Grid
         container
@@ -29,8 +26,11 @@ export default function MainGrid({selectedComponent}) {
         columns={12}
         sx={{ mb: (theme) => theme.spacing(2) }}
       >
-        {ComponentToRender && <ComponentToRender />} {}
-
+        {ComponentToRender && (
+          <Grid xs={12}>
+            <ComponentToRender />
+          </Grid>
+        )}
       </Grid>
     </Box>
   );

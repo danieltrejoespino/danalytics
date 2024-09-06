@@ -1,10 +1,5 @@
-import * as React from 'react';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Stack from '@mui/material/Stack';
+import React, { useState } from 'react';
+import { Stack, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from '@mui/material';
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import AnalyticsRoundedIcon from '@mui/icons-material/AnalyticsRounded';
 import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
@@ -17,29 +12,37 @@ const mainListItems = [
   { text: 'Tareas', icon: <AssignmentRoundedIcon /> },
 ];
 
-export default function MenuContent({actionMenu,setSelectedComponent}) {
+export default function MenuContent({ actionMenu, setSelectedComponent }) {
+  const [selectedIndex, setSelectedIndex] = useState(0); // Estado para almacenar el índice seleccionado
 
-  const handleMenuClick = (component) => {
-    setSelectedComponent(component);
-    console.log(component);
+  const handleMenuClick = (index) => {
+    setSelectedIndex(index); // Actualizar el índice seleccionado
+    setSelectedComponent(index); // Actualizar el componente seleccionado
   };
-
-  // !actionMenu con esto seleccionamos si vamos a ejecutar procesos o reportes
 
   return (
     <Stack sx={{ flexGrow: 1, p: 1, justifyContent: 'space-between' }}>
       <List dense>
         {mainListItems.map((item, index) => (
           <ListItem key={index} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton selected={index === 0}
-            onClick={()=>handleMenuClick(index)}
+            <ListItemButton
+              selected={selectedIndex === index} // Verificar si el índice actual es el seleccionado
+              onClick={() => handleMenuClick(index)} // Actualizar el índice seleccionado al hacer clic
+              sx={{ // Estilos adicionales para el botón seleccionado
+                ...(selectedIndex === index && {
+                  backgroundColor: 'rgba(0, 0, 255, 0.1)', // Ejemplo de fondo azul claro
+                  '&:hover': {
+                    backgroundColor: 'rgba(0, 0, 255, 0.2)', // Fondo más oscuro al pasar el ratón
+                  },
+                }),
+              }}
             >
               <ListItemIcon>{item.icon}</ListItemIcon>
               <ListItemText primary={item.text} />
             </ListItemButton>
           </ListItem>
         ))}
-      </List>      
+      </List>
     </Stack>
   );
 }
