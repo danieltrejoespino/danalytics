@@ -1,12 +1,9 @@
 import {useState } from "react";
-import { createTheme, ThemeProvider as MuiThemeProvider, alpha } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+import { createTheme, ThemeProvider as MuiThemeProvider } from '@mui/material/styles';
 import GetSignInTheme from '../theme/GetSignInTheme';
-import Header from './Header';
 import MainGrid from './MainGrid';
 import SideMenu from './SideMenu';
+import { Box, CssBaseline } from '@mui/material';
 
 
 import { ThemeProvider, useTheme } from '../contexts/ThemeContext';  
@@ -27,30 +24,11 @@ function DashboardContent() {
   return (
     <MuiThemeProvider theme={signInTheme}>
       <CssBaseline enableColorScheme />
-      <Box sx={{ display: 'flex' }}>
+      <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden',mx: 3, }}>
         <SideMenu setSelectedComponent={setSelectedComponent} /> 
-        {/* Main content */}
-        <Box
-          component="main"
-          sx={(theme) => ({
-            flexGrow: 1,
-            backgroundColor: alpha(theme.palette.background.default, 1),
-            overflow: 'auto',
-          })}
-        >
-          <Stack
-            spacing={2}
-            sx={{
-              alignItems: 'center',
-              mx: 3,
-              pb: 10,
-              mt: { xs: 8, md: 0 },
-            }}
-          >
-            <Header />
-            <MainGrid  selectedComponent={selectedComponent}/> 
-          </Stack>
-        </Box>
+
+        <MainGrid  selectedComponent={selectedComponent}/> 
+        
       </Box>
     </MuiThemeProvider>
   );

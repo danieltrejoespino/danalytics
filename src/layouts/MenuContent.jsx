@@ -4,12 +4,14 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import AnalyticsRoundedIcon from '@mui/icons-material/AnalyticsRounded';
 import PeopleRoundedIcon from '@mui/icons-material/PeopleRounded';
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
+import ChatIcon from '@mui/icons-material/Chat';
 
 const mainListItems = [
   { text: 'Inicio', icon: <HomeRoundedIcon /> },
-  { text: 'Reportes', icon: <AnalyticsRoundedIcon /> },
-  { text: 'Utilidades', icon: <PeopleRoundedIcon /> },
-  { text: 'Tareas', icon: <AssignmentRoundedIcon /> },
+  { text: 'Chat', icon: <ChatIcon /> },
+  // { text: 'Reportes', icon: <AnalyticsRoundedIcon /> },
+  // { text: 'Utilidades', icon: <PeopleRoundedIcon /> },
+  { text: 'Utilidades', icon: <AssignmentRoundedIcon /> },
 ];
 
 export default function MenuContent({ actionMenu, setSelectedComponent }) {
