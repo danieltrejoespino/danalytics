@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Box, Typography, TextField, Button, IconButton, Paper, styled, Card, CardMedia, Fab, Menu, MenuItem } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
+import { useSocket } from "../../hooks/useSocket";
+import Cookies from 'js-cookie';
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#dbecfe',
@@ -154,15 +155,52 @@ const Msg = ({ data, orientation, media }) => {
   )
 }
 
-const ChatWindow = () => (
+const ChatWindow = () => {
+  const { socket, online } = useSocket('http://localhost:3000',Cookies.get('token')) 
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    // Escucha mensajes o eventos del servidor
+    socket.on('chatMessage', (message) => {
+      console.log('Nuevo mensaje:', message);
+      console.log(messages);
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    // Cleanup cuando el componente se desmonte
+    return () => {
+      socket.off('chatMessage');
+    };
+  }, [socket]);
+
+  const sendMessage = () => {
+    if (message.trim()) {
+      socket.emit('chatMessage', { content: message });
+      setMessage(''); // Limpia el input después de enviar
+    }
+  };
+  const handleMessage = (e) => {
+    setMessage(e.target.value);
+    // console.log(e.target.value);
+  };
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      sendMessage(); // Llama a sendMessage cuando se presiona Enter
+    }
+  };
+
+return (
   <Paper elevation={3} style={{ height: '100vh', flex: 1, display: 'flex', flexDirection: 'column' }}>
     {/* Chat Header */}
     <Box p={2} borderBottom="1px solid #ddd">
-      <Typography variant="h6">Chat with Contact Name</Typography>
+      <Typography variant="h6">Chat DSA  {online ? "Conectado" : "Desconectado"}</Typography>
     </Box>
 
     <Box p={2} flex={1} overflow="auto">
-      <Msg data='Hola mundo' orientation={1} media={'text'} />
+      {/* <Msg data='Hola mundo' orientation={1} media={'text'} />
       <Msg data='Hola mundo' orientation={2} media={'text'} />
       <Msg
         data='https://w7.pngwing.com/pngs/258/281/png-transparent-letter-alphabet-blue-letter-d-miscellaneous-rectangle-teal-thumbnail.png'
@@ -171,19 +209,27 @@ const ChatWindow = () => (
       <Msg
         data='https://play-lh.googleusercontent.com/1-hPxafOxdYpYZEOKzNIkSP43HXCNftVJVttoo4ucl7rsMASXW3Xr6GlXURCubE1tA=w3840-h2160-rw'
         orientation={1}
-        media={'img'} />
+        media={'img'} /> */}
+        {messages.map((msg, index) => (
+          <Msg key={index} data={msg.message.content} orientation={1} media={'text'} />
+        ))}
 
     </Box>
 
     <FloatingActionButtons />
 
     <Box p={2} borderTop="1px solid #ddd" display="flex">
-      <TextField fullWidth variant="outlined" placeholder="Type a message..." />
-      <Button variant="contained" color="primary" style={{ marginLeft: '8px' }}>
+      <TextField 
+      value={message}
+      onChange={handleMessage}
+      onKeyPress={handleKeyPress} 
+      fullWidth variant="outlined" placeholder="Type a message..." />
+      <Button onClick={sendMessage} variant="contained" color="primary" style={{ marginLeft: '8px' }}>
         Enviar
       </Button>
     </Box>
   </Paper>
-);
+  )
+};
 
 export default ChatWindow;
