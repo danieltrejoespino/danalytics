@@ -1,6 +1,7 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Typography, TextField, Button, IconButton, Paper, styled, Card, CardMedia, Fab, Menu, MenuItem } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';import Avatar from '@mui/material/Avatar';
 import DownloadForOfflineIcon from '@mui/icons-material/DownloadForOffline';
 import { useSocket } from "../../hooks/useSocket";
 import Cookies from 'js-cookie';
@@ -11,17 +12,56 @@ const Item = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
   textAlign: 'center',
   color: theme.palette.text.secondary,
+  minWidth: '200px',
   ...theme.applyStyles('dark', {
     backgroundColor: '#3e5266',
     color: '#EDEFF4'
   }),
 }));
 
-const Msgtext = ({ text }) => {
+const Msgtext = ({ user = 'guest', text, isOwnMessage }) => {
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(text).then(() => {
+      // alert('Texto copiado al portapapeles!');
+    }).catch(err => {
+      console.error('Error al copiar texto: ', err);
+    });
+  };
+
+
   return (
-    <Typography variant="body2">{text}</Typography>
-  )
-}
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        position: 'relative', // Añadir posición relativa aquí
+      }}
+    >
+      <Avatar alt={user} src={`https://robohash.org/${user}.png`} sx={{ marginRight: 1 }} />
+      <Typography variant="body2" sx={{ wordWrap: 'break-word' }}>
+        <pre>
+          <code>{text}</code>
+        </pre>
+      </Typography>
+
+      <IconButton
+        onClick={handleCopy}
+        sx={{
+          position: 'absolute', // Cambiar a posición absoluta
+          top: 0,
+          right: 0,
+          zIndex: 1,
+          color: 'inherit',
+          size: 'small', // Hacer el botón más pequeño
+        }}
+      >
+        <ContentCopyRoundedIcon sx={{ fontSize: 15}}  />
+      </IconButton>
+    </Box>
+  );
+};
+
 const MsgImg = ({ img }) => {
   const [hover, setHover] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -93,51 +133,20 @@ const MsgImg = ({ img }) => {
   );
 };
 
+// orientation={msg.USERID === 1 ? 1 : 2}
 
-const FloatingActionButtons = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  return (
-    <Box sx={{ '& > :not(style)': { m: 1 } }}>
-      <Fab color="primary" aria-label="add" onClick={handleClick}>
-        <AddIcon />
-      </Fab>
-      <Menu
-        id="basic-menu"
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': 'basic-button',
-        }}
-      >
-        <MenuItem onClick={handleClose}>Adjuntar</MenuItem>
-        <MenuItem onClick={handleClose}>Imagen</MenuItem>
-        <MenuItem onClick={handleClose}>Logout</MenuItem>
-      </Menu>
-    </Box>
-  );
-}
-
-const Msg = ({ data, orientation, media }) => {
+const Msg = ({ data, media }) => {
   const sxProps = {
     my: 1,
-    borderRadius: '8px',
+    borderRadius: '10px',
     width: 'fit-content',
-    ...(orientation !== 1 && { ml: 'auto' })
+    ...(data.USERID !== 1 && { ml: 'auto' })
   };
   let CompToRender = null
 
   switch (media) {
     case 'text':
-      CompToRender = <Msgtext text={data} />
+      CompToRender = <Msgtext user={data.NAME_USER} text={data.MSG} isOwnMessage={data.USERID === 1} />
       break;
     case 'img':
       CompToRender = <MsgImg img={data} />
@@ -156,79 +165,86 @@ const Msg = ({ data, orientation, media }) => {
 }
 
 const ChatWindow = () => {
-  const { socket, online } = useSocket('http://localhost:3000',Cookies.get('token')) 
+  const { socket, online } = useSocket('http://localhost:3000', Cookies.get('token'))
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (!socket) return;
-
-    // Escucha mensajes o eventos del servidor
     socket.on('chatMessage', (message) => {
-      console.log('Nuevo mensaje:', message);
-      console.log(messages);
-      setMessages((prevMessages) => [...prevMessages, message]);
-    });
+      setMessages((prevMessages) => [...prevMessages, message.data]);
 
-    // Cleanup cuando el componente se desmonte
+    });
     return () => {
       socket.off('chatMessage');
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   const sendMessage = () => {
     if (message.trim()) {
-      socket.emit('chatMessage', { content: message });
-      setMessage(''); // Limpia el input después de enviar
+      let data = {
+        USERID: 1,
+        NAME_USER: 'daniel',
+        MSG: message
+      }
+
+      socket.emit('chatMessage', data);
+      setMessage('');
+
     }
   };
   const handleMessage = (e) => {
     setMessage(e.target.value);
-    // console.log(e.target.value);
   };
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
-      sendMessage(); // Llama a sendMessage cuando se presiona Enter
+      sendMessage();
     }
   };
 
-return (
-  <Paper elevation={3} style={{ height: '100vh', flex: 1, display: 'flex', flexDirection: 'column' }}>
-    {/* Chat Header */}
-    <Box p={2} borderBottom="1px solid #ddd">
-      <Typography variant="h6">Chat DSA  {online ? "Conectado" : "Desconectado"}</Typography>
-    </Box>
+  return (
+    <Paper elevation={3} style={{ height: '100vh', flex: 1, display: 'flex', flexDirection: 'column' }}>
+      {/* Chat Header */}
+      <Box p={2} borderBottom="1px solid #ddd">
+        <Typography variant="h6">Chat DSA  {online ? "Conectado" : "Desconectado"}</Typography>
+      </Box>
 
-    <Box p={2} flex={1} overflow="auto">
-      {/* <Msg data='Hola mundo' orientation={1} media={'text'} />
-      <Msg data='Hola mundo' orientation={2} media={'text'} />
-      <Msg
-        data='https://w7.pngwing.com/pngs/258/281/png-transparent-letter-alphabet-blue-letter-d-miscellaneous-rectangle-teal-thumbnail.png'
-        orientation={2}
-        media={'img'} />
-      <Msg
-        data='https://play-lh.googleusercontent.com/1-hPxafOxdYpYZEOKzNIkSP43HXCNftVJVttoo4ucl7rsMASXW3Xr6GlXURCubE1tA=w3840-h2160-rw'
-        orientation={1}
-        media={'img'} /> */}
-        {messages.map((msg, index) => (
-          <Msg key={index} data={msg.message.content} orientation={1} media={'text'} />
-        ))}
-
-    </Box>
-
-    <FloatingActionButtons />
-
-    <Box p={2} borderTop="1px solid #ddd" display="flex">
-      <TextField 
-      value={message}
-      onChange={handleMessage}
-      onKeyPress={handleKeyPress} 
-      fullWidth variant="outlined" placeholder="Type a message..." />
-      <Button onClick={sendMessage} variant="contained" color="primary" style={{ marginLeft: '8px' }}>
-        Enviar
-      </Button>
-    </Box>
-  </Paper>
+      <Box p={2} flex={1} overflow="auto">
+        {messages.map((msg, index) => {
+          console.log('Mensaje:', msg); // Aquí haces el console.log
+          return (
+            <Msg
+              key={index}
+              data={msg}
+              media={'text'}
+            />
+          );
+        })}
+        <div ref={messagesEndRef} />
+      </Box>
+      <Box p={2} borderTop="1px solid #ddd" display="flex">
+        <TextField
+          value={message}
+          onChange={handleMessage}
+          onKeyPress={handleKeyPress}
+          multiline
+          maxRows={1}
+          fullWidth variant="outlined"
+          placeholder="Escribe un mensaje"
+          style={{ overflowY: 'auto' }} 
+        />
+        <Button onClick={sendMessage} variant="contained" color="primary" style={{ marginLeft: '8px' }}>
+          Enviar
+        </Button>
+      </Box>
+    </Paper>
   )
 };
 
