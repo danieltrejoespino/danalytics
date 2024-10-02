@@ -1,9 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef,useContext } from 'react';
 import { Box, Typography,Paper } from '@mui/material';
 
+import { AuthContext  } from "../../contexts/AuthContext";
+import socketIOClient from "socket.io-client";
 
-import Cookies from 'js-cookie';
-import { useSocket } from "../../hooks/useSocket";
+
+
+// import { useSocket } from "../../hooks/useSocket";
 import TypeMessage from "./TypeMessage";
 import ChatInput from "./ChatInput";
 
@@ -12,22 +15,54 @@ import ChatInput from "./ChatInput";
 
 
 const ChatWindow = () => {
-  const { socket, online } = useSocket('http://localhost:3000', Cookies.get('token'))
+  // const { socket, online } = useSocket('http://localhost:3000', Cookies.get('token'))
+  const { userName} = useContext(AuthContext);
+
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
   const messagesEndRef = useRef(null);
 
+  const ENDPOINT = "http://localhost:3000";
+  const socketRef = useRef();
   useEffect(() => {
-    if (!socket) return;
-    socket.on('chatMessage', (message) => {
-      setMessages((prevMessages) => [...prevMessages, message.data]);
+    socketRef.current = socketIOClient(ENDPOINT);
 
+    socketRef.current.on("previousMessages", (previousMessages) => {
+      // console.log(previousMessages)
+      setMessages(previousMessages);
     });
+
+    socketRef.current.on("chatMessage", (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
     return () => {
-      socket.off('chatMessage');
+      socketRef.current.disconnect();
     };
-  }, [socket]);
+  }, []);
+
+  // useEffect(() => {
+  //   if (!socket) return;
+  
+  //   // Cuando se conecta o se reconecta, solicita los mensajes anteriores
+  //   socket.on("connect", () => {
+  //     socket.emit("getPreviousMessages");
+  //   });
+  
+  //   socket.on("previousMessages", (messages) => {
+  //     setMessages(messages);  // Almacena los mensajes recibidos en el estado
+  //   });
+  
+  //   socket.on("chatMessage", (message) => {
+  //     setMessages((prevMessages) => [...prevMessages, message.data]);  // Añade los mensajes nuevos
+  //   });
+  
+  //   return () => {
+  //     socket.off("previousMessages");
+  //     socket.off("chatMessage");
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -35,15 +70,17 @@ const ChatWindow = () => {
     }
   }, [messages]);
 
+const online = 1
+
   const sendMessage = () => {
     if (message.trim()) {
       let data = {
         USERID: 1,
-        NAME_USER: 'daniel',
+        NAME_USER: userName,
         TYPE: 'text',
         MSG: message
       }
-      socket.emit('chatMessage', data);
+      socketRef.current.emit('chatMessage', data);
       setMessage('');
 
     }
@@ -72,12 +109,13 @@ const ChatWindow = () => {
         // console.log(base64String);
         let data = {
           USERID: 1,
-          NAME_USER: 'daniel',
+          NAME_USER: userName,
           TYPE: typeFile,
           NAMEFILE: name,
           MSG: base64String
         }
-        socket.emit('chatMessage', data);
+        // socket.emit('chatMessage', data);
+        socketRef.current.emit('chatMessage', data);
       }
       reader.readAsDataURL(file);
     }

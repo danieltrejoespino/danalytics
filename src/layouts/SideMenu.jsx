@@ -1,4 +1,4 @@
-import {useState } from "react";
+import {useState,useContext } from "react";
 import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
@@ -12,6 +12,7 @@ import OptionsMenu from './OptionsMenu';
 import { useTheme } from '../contexts/ThemeContext';
 import ToggleColorMode from '../theme/ToggleColorMode';
 
+import {AuthContext  } from "../contexts/AuthContext";
 const drawerWidth = 240;
 
 const Drawer = styled(MuiDrawer)({
@@ -26,6 +27,7 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu ({ setSelectedComponent }) {
+  const { userName} = useContext(AuthContext);
   const { mode, toggleMode } = useTheme();
 
   const [actionMenu, setActionMenu] = useState(1);
@@ -85,7 +87,7 @@ export default function SideMenu ({ setSelectedComponent }) {
         />
         <Box sx={{ mr: 'auto' }}>
           <Typography variant="body2" sx={{ fontWeight: 500, lineHeight: '16px' }}>
-            Daniel Trejo
+            {userName}
           </Typography>
         </Box>
         <OptionsMenu />

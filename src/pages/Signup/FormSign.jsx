@@ -1,3 +1,8 @@
+import { useContext , useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { AuthContext } from "../../contexts/AuthContext";
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -9,8 +14,11 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-
-
+import InputAdornment from '@mui/material/InputAdornment';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import IconButton from '@mui/material/IconButton';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 
 const Card = styled(MuiCard)(({ theme }) => ({
@@ -34,79 +42,113 @@ const Card = styled(MuiCard)(({ theme }) => ({
 
 
 export default function FormSign() {
+  const { login} = useContext(AuthContext);
+  const navigate = useNavigate()
+  const [dataLogin, setDataLogin] = useState({
+    loginUser: "",
+    loginPass: ""
+  });
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleCredentials = (e) => {
+    console.log(e.target.value);
+    setDataLogin({ ...dataLogin, [e.target.name]: e.target.value })
+  }
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    let TOKEN = '123456'
+    // console.log(dataLogin);
+    login(TOKEN,dataLogin.loginUser)
+    navigate('/')
+  }
+
+
   return (
     <Card variant="outlined">
-    <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
-    </Box>
-    <Typography
-      component="h1"
-      variant="h4"
-      sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
-    >
-      Inicio de sesion
-    </Typography>
-    <Box
-      component="form"
-      // onSubmit={handleSubmit}
-      noValidate
-      sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
-    >
-      <FormControl>
-        <FormLabel htmlFor="email">Usuario</FormLabel>
-        <TextField
-          // error={emailError}
-          // helperText={emailErrorMessage}
-          id="email"
-          type="email"
-          name="email"
-          placeholder="nomina"
-          autoComplete="email"
-          autoFocus
-          required
-          fullWidth
-          variant="outlined"
-          // color={emailError ? 'error' : 'primary'}
-          sx={{ ariaLabel: 'email' }}
-        />
-      </FormControl>
-      <FormControl>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <FormLabel htmlFor="password">Contraseña</FormLabel>
-          <Link
-            component="button"
-            // onClick={handleClickOpen}
-            variant="body2"
-            sx={{ alignSelf: 'baseline' }}
+      <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+      </Box>
+      <Typography
+        component="h1"
+        variant="h4"
+        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+      >
+        Inicio de sesion 
+      </Typography>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+
+          sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: 2 }}
+        >
+
+          <FormControl>
+            <FormLabel htmlFor="email">Usuario</FormLabel>
+            <TextField
+              value={dataLogin.loginUser}
+              onChange={handleCredentials}
+              id="email"
+              type="text"
+              name="loginUser"
+              placeholder="Usuario"
+              autoComplete="email"
+              autoFocus
+              required
+              fullWidth
+              variant="outlined"
+              sx={{ ariaLabel: 'email' }}
+            />
+          </FormControl>
+          <FormControl>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <FormLabel htmlFor="password">Contraseña</FormLabel>
+              <Link
+                component="button"
+                variant="body2"
+                sx={{ alignSelf: 'baseline' }}
+              >
+                Olvidaste tu contraseña?
+              </Link>
+            </Box>
+            <OutlinedInput
+            id="outlined-adornment-password"
+            value={dataLogin.loginPass}
+            onChange={handleCredentials}
+            name="loginPass"
+            type={showPassword ? 'text' : 'password'}
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={handleClickShowPassword}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
+          />
+
+          </FormControl>
+
+
+
+          <FormControlLabel
+            control={<Checkbox value="remember" color="primary" />}
+            label="Recuerdame"
+          />
+          {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
+          <Button type="submit" fullWidth variant="contained"
+          //  onClick={validateInputs}
           >
-            Olvidaste tu contraseña?
-          </Link>
+            Iniciar sesión
+          </Button>
         </Box>
-        <TextField
-          // error={passwordError}
-          // helperText={passwordErrorMessage}
-          name="password"
-          placeholder="••••••"
-          type="password"
-          id="password"
-          autoComplete="current-password"
-          autoFocus
-          required
-          fullWidth
-          variant="outlined"
-          // color={passwordError ? 'error' : 'primary'}
-        />
-      </FormControl>
-      <FormControlLabel
-        control={<Checkbox value="remember" color="primary" />}
-        label="Recuerdame"
-      />
-      {/* <ForgotPassword open={open} handleClose={handleClose} /> */}
-      <Button type="submit" fullWidth variant="contained"
-      //  onClick={validateInputs}
-       >
-        Iniciar sesión
-      </Button>      
-    </Box>    
-  </Card>
+    </Card>
   )
 }
