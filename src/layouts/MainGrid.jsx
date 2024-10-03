@@ -5,13 +5,11 @@ import Typography from '@mui/material/Typography';
 // import Sales from "../pages/reports/Sales";
 // import Cancelled from "../pages/reports/Cancelled";
 import ChatLayout from "../pages/Chat/ChatLayout";
-
+import Utilities from "../pages/utilities/Utilities";
 export default function MainGrid({selectedComponent}) {
   const data = [
-    // { idCom:1, name: "Ventas", component: Sales, icon: AttachMoneyIcon },
-    // { idCom:2, name: "Ventas Canceladas", component: Cancelled, icon: AttachMoneyIcon },
     { idCom:1, name: "Chat", component: ChatLayout },
-    // { idCom:3, name: "Ventas Validadas", component: Validadas, icon: AttachMoneyIcon },
+    { idCom:2, name: "Utilities", component: Utilities},
   ];
   const selectedData = data.find((item) => item.idCom === selectedComponent);
   const ComponentToRender = selectedData ? selectedData.component : null;
