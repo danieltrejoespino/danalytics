@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Typography, Box, TextField, InputAdornment, IconButton } from '@mui/material';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
-
+import { enqueueSnackbar } from 'notistack'
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: '#F5F6FA',
   ...theme.typography.body2,
@@ -66,8 +66,14 @@ export default function Utilities() {
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text)
-      .then(() => {
-        console.log("Texto copiado:", text);
+      .then(() => {        
+        const message = 'Texto copiado'
+        enqueueSnackbar(message, { variant: 'info', anchorOrigin : {
+          vertical: 'top',
+          horizontal: 'right',
+         }
+        }
+        )
         // Puedes agregar una notificación aquí si deseas
       })
       .catch(err => {

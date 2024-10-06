@@ -18,6 +18,7 @@
     "axios": "^1.7.7",
     "dayjs": "^1.11.13",
     "js-cookie": "^3.0.5",
+    "notistack": "^3.0.1",
     "react": "^18.3.1",
     "react-csv": "^2.2.2",
     "react-data-table-component": "^7.6.2",

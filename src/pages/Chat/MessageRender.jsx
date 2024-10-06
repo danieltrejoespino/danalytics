@@ -1,12 +1,21 @@
 import { Box, Typography, TextField, Button, IconButton, Paper, styled, Card, CardMedia, Fab, Menu, MenuItem } from '@mui/material';
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded'; 
 import Avatar from '@mui/material/Avatar';
+import { enqueueSnackbar } from 'notistack'
 
 const MessageRender = ({ text }) => {
 
   const handleCopy = () => {
     navigator.clipboard.writeText(text.MSG).then(() => {
       // alert('Texto copiado al portapapeles!');
+      const message = 'Texto copiado'
+      enqueueSnackbar(message, { variant: 'info', anchorOrigin : {
+        vertical: 'top',
+        horizontal: 'right',
+       }
+      }
+      )
+
     }).catch(err => {
       console.error('Error al copiar texto: ', err);
     });
