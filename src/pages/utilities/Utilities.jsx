@@ -8,7 +8,7 @@ import { Typography, Box, TextField, InputAdornment, IconButton } from '@mui/mat
 import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded';
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: '#dbecfe',
+  backgroundColor: '#F5F6FA',
   ...theme.typography.body2,
   padding: theme.spacing(1),
   textAlign: 'center',
@@ -79,14 +79,14 @@ export default function Utilities() {
 
     <Box sx={{ width: '100%', flexGrow: 1 }}>
       <Grid container spacing={2}>
-        <Grid item xs={6}>
+        <Grid xs={6}>
           <Item>
             <Typography variant="h5" gutterBottom>
               Encriptar / desencriptar Base 64
             </Typography>
 
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <Box sx={{ marginBottom: 2 }}>
                   <TextField
                     onChange={handleInputChange}
@@ -97,7 +97,7 @@ export default function Utilities() {
                   />
                 </Box>
               </Grid>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <TextField
                   value={dataInput.codeInput}
                   name="codeInput"
@@ -126,7 +126,7 @@ export default function Utilities() {
                   }}
                 />
               </Grid>
-              <Grid item xs={6}>
+              <Grid xs={6}>
                 <TextField
                   value={dataInput.decodeInput}
                   label="Decode (Base64)"
@@ -159,13 +159,13 @@ export default function Utilities() {
           </Item>
         </Grid>
 
-        <Grid item xs={6}>
+        <Grid xs={6}>
           <Item>
             <Typography variant="h5" gutterBottom>
               Contar caracteres
             </Typography>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+              <Grid xs={12}>
                 <Box sx={{ marginBottom: 2 }}>
                   <TextField
                     onChange={handleWords}

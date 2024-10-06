@@ -1,7 +1,7 @@
 import { useContext , useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import { AuthContext } from "../../contexts/AuthContext";
+import axios from 'axios';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -52,7 +52,7 @@ export default function FormSign() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleCredentials = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     setDataLogin({ ...dataLogin, [e.target.name]: e.target.value })
   }
 
@@ -60,11 +60,32 @@ export default function FormSign() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const URL = import.meta.env.VITE_API_URL;
 
-    let TOKEN = '123456'
-    // console.log(dataLogin);
-    login(TOKEN,dataLogin.loginUser)
-    navigate('/')
+    const ENDPOINT = URL+'auth/login'
+
+    let data = {
+      username : dataLogin.loginUser,
+      password : dataLogin.loginPass
+    }
+    try {
+      const response = await axios.post(ENDPOINT,data)
+      
+      if (response.status == 200) {
+        login(response.data.token,response.data.idUser,response.data.nameUser)
+        navigate('/')
+      }
+
+    } catch (error) {
+      if (error.status != 200) {
+        alert('Credenciales incorrectas')
+      }
+      console.log(error);
+      console.log('---',error.status);
+      console.log('---',error.response.data.message);
+    }
+    
+    
   }
 
 
@@ -78,7 +99,8 @@ export default function FormSign() {
         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
       >
         Inicio de sesion 
-      </Typography>
+        <a href="https://192.168.1.80:3000/api/auth" target="_blank" rel="noopener noreferrer">api</a>
+        </Typography>
         <Box
           component="form"
           onSubmit={handleSubmit}
@@ -104,8 +126,8 @@ export default function FormSign() {
             />
           </FormControl>
           <FormControl>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <FormLabel htmlFor="password">Contraseña</FormLabel>
+            {/* <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <FormLabel htmlFor="http://localhost:5173/login">Contraseña</FormLabel>
               <Link
                 component="button"
                 variant="body2"
@@ -113,7 +135,7 @@ export default function FormSign() {
               >
                 Olvidaste tu contraseña?
               </Link>
-            </Box>
+            </Box> */}
             <OutlinedInput
             id="outlined-adornment-password"
             value={dataLogin.loginPass}

@@ -11,19 +11,17 @@ import TypeMessage from "./TypeMessage";
 import ChatInput from "./ChatInput";
 
 
-
-
-
 const ChatWindow = () => {
   // const { socket, online } = useSocket('http://localhost:3000', Cookies.get('token'))
-  const { userName} = useContext(AuthContext);
+  const { userName,userId} = useContext(AuthContext);
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
 
   const messagesEndRef = useRef(null);
 
-  const ENDPOINT = "http://localhost:3000";
+  const ENDPOINT = import.meta.env.VITE_API_URL_CHAT;
+
   const socketRef = useRef();
   useEffect(() => {
     socketRef.current = socketIOClient(ENDPOINT);
@@ -73,9 +71,11 @@ const ChatWindow = () => {
 const online = 1
 
   const sendMessage = () => {
+
+
     if (message.trim()) {
       let data = {
-        USERID: 1,
+        USERID: userId,
         NAME_USER: userName,
         TYPE: 'text',
         MSG: message
@@ -100,8 +100,6 @@ const online = 1
       const { type, name } = file;
 
       let typeFile = type == 'image/jpeg' ? 'image' : 'file'
-
-      console.log(typeFile);
 
       const reader = new FileReader()
       reader.onloadend = () => {
