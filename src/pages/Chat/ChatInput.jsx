@@ -3,7 +3,7 @@ import SendIcon from '@mui/icons-material/Send';
 import { Box, TextField, IconButton } from '@mui/material';
 
 
-const ChatInput = ({ message, handleMessage, handleKeyPress, handleFileChange, sendMessage }) => {
+const ChatInput = ({ message, handleMessage, handleKeyPress, handleFileChange,handleBtnSend }) => {
   return (
     <Box p={2} borderTop="1px solid #ddd" display="flex">
 
@@ -31,7 +31,7 @@ const ChatInput = ({ message, handleMessage, handleKeyPress, handleFileChange, s
         style={{ overflowY: 'auto' }}
       />
       <IconButton
-        onClick={sendMessage}
+        onClick={handleBtnSend}
         style={{ color: "#60aefa" }} 
       >
         <SendIcon />

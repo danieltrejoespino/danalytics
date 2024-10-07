@@ -6,10 +6,13 @@ import Typography from '@mui/material/Typography';
 // import Cancelled from "../pages/reports/Cancelled";
 import ChatLayout from "../pages/Chat/ChatLayout";
 import Utilities from "../pages/utilities/Utilities";
+import SelectQuery from "../pages/selectDB/SelectQuery";
+
 export default function MainGrid({selectedComponent}) {
   const data = [
     { idCom:1, name: "Chat", component: ChatLayout },
     { idCom:2, name: "Utilities", component: Utilities},
+    { idCom:3, name: "Query", component: SelectQuery}
   ];
   const selectedData = data.find((item) => item.idCom === selectedComponent);
   const ComponentToRender = selectedData ? selectedData.component : null;

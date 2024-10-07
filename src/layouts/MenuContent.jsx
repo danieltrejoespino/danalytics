@@ -3,6 +3,7 @@ import { Stack, List, ListItem, ListItemButton, ListItemIcon, ListItemText } fro
 import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import ChatIcon from '@mui/icons-material/Chat';
+import StorageIcon from '@mui/icons-material/Storage';
 
 const mainListItems = [
   { text: 'Inicio', icon: <HomeRoundedIcon /> },
@@ -10,6 +11,8 @@ const mainListItems = [
   // { text: 'Reportes', icon: <AnalyticsRoundedIcon /> },
   // { text: 'Utilidades', icon: <PeopleRoundedIcon /> },
   { text: 'Utilidades', icon: <AssignmentRoundedIcon /> },
+  { text: 'Query', icon: <StorageIcon /> },
+  // { text: 'Caja de ahorro', icon: <PointOfSaleIcon /> },
 ];
 
 export default function MenuContent({ actionMenu, setSelectedComponent }) {

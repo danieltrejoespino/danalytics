@@ -27,11 +27,13 @@ const Item = styled(Paper)(({ theme }) => ({
 const TypeMessage = ({ data }) => {
   const { userName,userId} = useContext(AuthContext);
 
+  // console.log(data.TYPE)
+
   const sxProps = {
     my: 1,
     borderRadius: '10px',
     width: 'fit-content',
-    ...(data.USERID !== userId && { ml: 'auto' })
+    ...(data.USERID == userId && { ml: 'auto' })
   };
   let CompToRender = null
 

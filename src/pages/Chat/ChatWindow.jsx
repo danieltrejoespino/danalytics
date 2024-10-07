@@ -26,6 +26,12 @@ const ChatWindow = () => {
     setMessage(e.target.value);
   };
 
+  const handleBtnSend = (e) => {    
+      sendMessage(message);
+      setMessage(''); 
+
+  };
+
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
       sendMessage(message);
@@ -58,7 +64,7 @@ const ChatWindow = () => {
         })}
         <div ref={messagesEndRef} />
       </Box>
-      <ChatInput handleFileChange={handleFileChange} handleKeyPress={handleKeyPress} handleMessage={handleMessage} message={message} sendMessage={sendMessage} />
+      <ChatInput handleFileChange={handleFileChange} handleKeyPress={handleKeyPress} handleMessage={handleMessage} message={message} handleBtnSend={handleBtnSend}/>
 
     </Paper>
   )

@@ -50,6 +50,8 @@ export default function FormSign() {
     loginPass: ""
   });
 
+  const URL = import.meta.env.VITE_API_URL;
+
   const [showPassword, setShowPassword] = useState(false);
 
   const handleCredentials = (e) => {
@@ -61,7 +63,7 @@ export default function FormSign() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const URL = import.meta.env.VITE_API_URL;
+    
 
     const ENDPOINT = URL + 'auth/login'
 
@@ -115,7 +117,7 @@ export default function FormSign() {
         sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
       >
         Inicio de sesion
-        <a href="https://192.168.1.80:3000/api/auth" target="_blank" rel="noopener noreferrer">api</a>
+        <a href={`${URL}auth`} target="_blank" rel="noopener noreferrer">api</a>
       </Typography>
       <Box
         component="form"

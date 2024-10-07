@@ -12,7 +12,7 @@ export const useSocket = (userId, userName) => {
 
     socketRef.current.on('connect', () => {
       setIsConnected(true);
-      console.log("Conectado al servidor");
+      // console.log("Conectado al servidor");
     });
 
     // Cuando se desconecta
@@ -53,7 +53,20 @@ export const useSocket = (userId, userName) => {
   const sendFile = (file) => {
     if (file) {
       const { type, name } = file;
-      let typeFile = type === 'image/jpeg' ? 'image' : 'file';
+
+      const fileTypes = {
+        'image/jpeg': 'image',
+        'image/png': 'image',
+        'image/gif': 'image',
+        'image/webp': 'image',
+        // Otros tipos de imagen
+        'application/pdf': 'file',
+        'text/plain': 'file',
+        'application/msword': 'file',
+        // Otros tipos de archivo
+      };
+
+      let typeFile = fileTypes[type] || 'file';
 
       const reader = new FileReader();
       reader.onloadend = () => {
