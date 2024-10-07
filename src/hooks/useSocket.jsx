@@ -1,32 +1,76 @@
-import { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
+import { useEffect, useRef, useState } from 'react';
+import socketIOClient from 'socket.io-client';
 
-export const useSocket = (serverPath, token) => {
-  const [online, setOnline] = useState(false);
-  const socket = useRef(null);
+export const useSocket = (userId, userName) => {
+  const ENDPOINT = import.meta.env.VITE_API_URL_CHAT;
+  const [messages, setMessages] = useState([]);
+  const [isConnected, setIsConnected] = useState(false)
+  const socketRef = useRef();
 
   useEffect(() => {
-    // Conecta el socket y pasa el token para la autenticación
-    socket.current = io(serverPath, {
-      auth: {
-        token: token,  // Aquí pasas el token JWT
-      },
+    socketRef.current = socketIOClient(ENDPOINT);
+
+    socketRef.current.on('connect', () => {
+      setIsConnected(true);
+      console.log("Conectado al servidor");
     });
 
-    // Actualiza el estado de conexión
-    socket.current.on('connect', () => {
-      setOnline(true);
+    // Cuando se desconecta
+    socketRef.current.on('disconnect', () => {
+      setIsConnected(false);
+      console.log("Desconectado del servidor");
     });
 
-    socket.current.on('disconnect', () => {
-      setOnline(false);
+    // Escuchar mensajes anteriores
+    socketRef.current.on("previousMessages", (previousMessages) => {
+      console.log("Mensajes anteriores:", previousMessages); // Agrega este log
+      setMessages(previousMessages);
     });
 
-    // Cleanup al desmontar
+    // Escuchar nuevos mensajes de chat
+    socketRef.current.on("chatMessage", (message) => {
+      setMessages((prevMessages) => [...prevMessages, message]);
+    });
+
+    // Desconectar cuando se desmonta el componente
     return () => {
-      socket.current.disconnect();
+      socketRef.current.disconnect();
     };
-  }, [serverPath, token]);
+  }, [ENDPOINT]);
 
-  return { socket: socket.current, online };
+  const sendMessage = (message) => {
+    if (message) {
+      let data = {
+        USERID: userId,
+        NAME_USER: userName,
+        TYPE: 'text',
+        MSG: message
+      };
+      socketRef.current.emit('chatMessage', data);
+    }
+  };
+
+  const sendFile = (file) => {
+    if (file) {
+      const { type, name } = file;
+      let typeFile = type === 'image/jpeg' ? 'image' : 'file';
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        let data = {
+          USERID: userId,
+          NAME_USER: userName,
+          TYPE: typeFile,
+          NAMEFILE: name,
+          MSG: base64String
+        };
+        socketRef.current.emit('chatMessage', data);
+      };
+      reader.readAsDataURL(file); // Leer archivo como base64
+    }
+  };
+
+
+  return {isConnected, messages, sendMessage,sendFile  };
 };
