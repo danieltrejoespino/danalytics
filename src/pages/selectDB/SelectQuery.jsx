@@ -6,6 +6,10 @@ import Grid from "@mui/material/Unstable_Grid2";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import { enqueueSnackbar } from "notistack";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#F5F6FA",
@@ -38,12 +42,20 @@ const ItemRespuesta = styled(Paper)(({ theme }) => ({
 const SelectQuery = () => {
   const [query, setQuery] = useState("SELECT * FROM DUAL");
   const [data, setData] = useState("");
+  const [userConn, setUserConn] = useState("");
+
+
+
+  const handleChange = (event) => {
+    setUserConn(event.target.value);
+  };
+
 
   const handleSubmit = async () => {
     const url = "https://172.20.1.97:3009/api-serv/testOraQuery";
     const params = {
       query: ` ${query} `,
-      campaign: "0",
+      campaign: userConn,
     };
     try {
       const response = await axios.post(url, params, {
@@ -94,6 +106,25 @@ const SelectQuery = () => {
                     label="Escribe o pega algo"
                     variant="outlined"
                   />
+                </Box>
+
+                <Box sx={{ marginBottom: 2 }}>
+                  <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Esquemas</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      value={userConn}
+                      label="Conexiones"
+                      onChange={handleChange}
+                    >
+                      <MenuItem value={0}>DBO</MenuItem>
+                      <MenuItem value={1}>ASISTENCIA</MenuItem>
+                      <MenuItem value={1008}>AMEXINSURANCEDIG</MenuItem>
+                      <MenuItem value={998}>HSBCAPP</MenuItem>
+                      <MenuItem value={1013}>CITIBANCOWEB</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Box>
 
                 <Box sx={{ marginBottom: 2 }}>
