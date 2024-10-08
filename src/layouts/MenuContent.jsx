@@ -5,6 +5,7 @@ import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded';
 import ChatIcon from '@mui/icons-material/Chat';
 import StorageIcon from '@mui/icons-material/Storage';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import GroupIcon from '@mui/icons-material/Group';
 const mainListItems = [
   { text: 'Inicio', icon: <HomeRoundedIcon /> },
   { text: 'Chat', icon: <ChatIcon /> },
@@ -13,6 +14,7 @@ const mainListItems = [
   { text: 'Utilidades', icon: <AssignmentRoundedIcon /> },
   { text: 'Query', icon: <StorageIcon /> },
   { text: 'Caja de ahorro', icon: <AccountBalanceIcon /> },
+  { text: 'Index10', icon: <GroupIcon /> },
 ];
 
 export default function MenuContent({ actionMenu, setSelectedComponent }) {
