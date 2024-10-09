@@ -8,13 +8,12 @@ import TypeMessage from "./TypeMessage";
 import ChatInput from "./ChatInput";
 
 
-const ChatWindow = () => {
+const ChatWindow = ({room}) => {
   const { userName, userId } = useContext(AuthContext);
   const [message, setMessage] = useState('');
-  const messagesEndRef = useRef(null);
+  const messagesEndRef = useRef(null);  
   
-  
-  const { messages, sendMessage,isConnected,sendFile } = useSocket(userId, userName);
+  const { messages, sendMessage,isConnected,sendFile } = useSocket(userId, userName,room);
 
   useEffect(() => {
     if (messagesEndRef.current) {

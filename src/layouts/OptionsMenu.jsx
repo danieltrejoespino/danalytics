@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useContext, useState,Fragment } from 'react';
 import { styled } from '@mui/material/styles';
 import Divider, { dividerClasses } from '@mui/material/Divider';
 import Menu from '@mui/material/Menu';
@@ -10,13 +10,16 @@ import ListItemIcon, { listItemIconClasses } from '@mui/material/ListItemIcon';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import MoreVertRoundedIcon from '@mui/icons-material/MoreVertRounded';
 import MenuButton from './MenuButton';
+import {AuthContext} from "../contexts/AuthContext";
+
 
 const MenuItem = styled(MuiMenuItem)({
   margin: '2px 0',
 });
 
 export default function OptionsMenu() {
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const { logout } = useContext(AuthContext);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -24,8 +27,11 @@ export default function OptionsMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+  const handleOut = () => {
+    logout()
+  };
   return (
-    <React.Fragment>
+    <Fragment>
       <MenuButton
         aria-label="Open menu"
         onClick={handleClick}
@@ -66,12 +72,12 @@ export default function OptionsMenu() {
             },
           }}
         >
-          <ListItemText>Salir</ListItemText>
+          <ListItemText onClick={handleOut} >Salir</ListItemText>
           <ListItemIcon>
             <LogoutRoundedIcon fontSize="small" />
           </ListItemIcon>
         </MenuItem>
       </Menu>
-    </React.Fragment>
+    </Fragment>
   );
 }

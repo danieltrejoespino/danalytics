@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import socketIOClient from 'socket.io-client';
 
-export const useSocket = (userId, userName) => {
+export const useSocket = (userId, userName,room) => {
   const ENDPOINT = import.meta.env.VITE_API_URL_CHAT;
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false)
@@ -41,6 +41,7 @@ export const useSocket = (userId, userName) => {
   const sendMessage = (message) => {
     if (message) {
       let data = {
+        ROOM: room,
         USERID: userId,
         NAME_USER: userName,
         TYPE: 'text',
@@ -72,6 +73,7 @@ export const useSocket = (userId, userName) => {
       reader.onloadend = () => {
         const base64String = reader.result;
         let data = {
+          ROOM: room,
           USERID: userId,
           NAME_USER: userName,
           TYPE: typeFile,
