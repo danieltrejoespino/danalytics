@@ -12,7 +12,12 @@ export const useSocket = (userId, userName,room) => {
 
     socketRef.current.on('connect', () => {
       setIsConnected(true);
-      // console.log("Conectado al servidor");
+      
+      if (room) {
+        socketRef.current.emit('joinRoom', room);
+        console.log(`Unido a la sala: ${room}`);
+      }
+
     });
 
     // Cuando se desconecta
@@ -36,17 +41,18 @@ export const useSocket = (userId, userName,room) => {
     return () => {
       socketRef.current.disconnect();
     };
-  }, [ENDPOINT]);
+  }, [ENDPOINT,room]);
 
   const sendMessage = (message) => {
     if (message) {
       let data = {
-        ROOM: room,
+        room: room,
         USERID: userId,
         NAME_USER: userName,
         TYPE: 'text',
         MSG: message
       };
+      console.log(data);
       socketRef.current.emit('chatMessage', data);
     }
   };
@@ -73,13 +79,14 @@ export const useSocket = (userId, userName,room) => {
       reader.onloadend = () => {
         const base64String = reader.result;
         let data = {
-          ROOM: room,
+          room: room,
           USERID: userId,
           NAME_USER: userName,
           TYPE: typeFile,
           NAMEFILE: name,
           MSG: base64String
         };
+        console.log(data);
         socketRef.current.emit('chatMessage', data);
       };
       reader.readAsDataURL(file); // Leer archivo como base64

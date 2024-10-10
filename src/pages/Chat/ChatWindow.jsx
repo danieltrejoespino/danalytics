@@ -8,7 +8,7 @@ import TypeMessage from "./TypeMessage";
 import ChatInput from "./ChatInput";
 
 
-const ChatWindow = ({room}) => {
+const ChatWindow = ({room,nameRoom}) => {
   const { userName, userId } = useContext(AuthContext);
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef(null);  
@@ -49,11 +49,12 @@ const ChatWindow = ({room}) => {
     <Paper elevation={3} style={{ height: '100vh', flex: 1, display: 'flex', flexDirection: 'column' }}>
       {/* Chat Header */}
       <Box p={2} borderBottom="1px solid #ddd">
-        <Typography variant="h6">Chat DSA  {isConnected ? "Conectado" : "Desconectado"}</Typography>
+        <Typography variant="h6">Chat con {nameRoom} </Typography>
       </Box>
 
       <Box p={2} flex={1} overflow="auto">
         {messages.map((msg, index) => {
+          {/* console.log(msg) */}
           return (
             <TypeMessage
               key={index}

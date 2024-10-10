@@ -28,8 +28,8 @@ const Sidebar = ({ rooms, setSelectRoom }) => {
                 }),
               }}
             >
-              <ListItemAvatar>
-                <Avatar src="https://robohash.org/dani.png" />
+              <ListItemAvatar>                
+                <Avatar src={`https://robohash.org/${room.ID}.png`} />
               </ListItemAvatar>
               <ListItemText primary={room.NAME} 
               // secondary="Last message..." 
