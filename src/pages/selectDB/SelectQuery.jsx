@@ -93,6 +93,7 @@ const SelectQuery = () => {
             <Typography variant="h5" gutterBottom>
               Consulta a Oracle{" "}
               <span style={{ color: "red" }}>(Siempre agrega un WHERE)</span>
+              <a href={`https://172.20.1.97:3009/api-serv/testApi`} target="_blank" rel="noopener noreferrer">api</a>
             </Typography>
 
 
