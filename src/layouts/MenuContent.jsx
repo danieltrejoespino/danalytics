@@ -6,6 +6,8 @@ import ChatIcon from '@mui/icons-material/Chat';
 import StorageIcon from '@mui/icons-material/Storage';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import GroupIcon from '@mui/icons-material/Group';
+import PhoneEnabledIcon from '@mui/icons-material/PhoneEnabled';
+import FmdBadIcon from '@mui/icons-material/FmdBad';
 const mainListItems = [
   { text: 'Inicio', icon: <HomeRoundedIcon /> },
   { text: 'Chat', icon: <ChatIcon /> },
@@ -15,6 +17,8 @@ const mainListItems = [
   { text: 'Query', icon: <StorageIcon /> },
   { text: 'Caja de ahorro', icon: <AccountBalanceIcon /> },
   { text: 'Index10', icon: <GroupIcon /> },
+  { text: 'Extensiones', icon: <PhoneEnabledIcon /> },
+  { text: 'Re etiquetado citibanco', icon: <FmdBadIcon /> },
 ];
 
 export default function MenuContent({ actionMenu, setSelectedComponent }) {
