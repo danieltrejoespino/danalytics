@@ -15,6 +15,14 @@ const rooms = [
     NAME: "Dani"
   },
   {
+    ID: "7",
+    NAME: "Vicky"
+  },
+  {
+    ID: "8",
+    NAME: "Ivan"
+  },
+  {
     ID: "3",
     NAME: "Cris"
   },

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import DataTable, { createTheme } from "react-data-table-component";
 
 import { Typography, Box, TextField, Button, IconButton } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
@@ -13,6 +14,7 @@ import Select from "@mui/material/Select";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#F5F6FA",
+  // height: "400px",
   ...theme.typography.body2,
   padding: theme.spacing(1),
   textAlign: "center",
@@ -27,6 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
 const ItemRespuesta = styled(Paper)(({ theme }) => ({
   backgroundColor: "#F5F6FA",
   ...theme.typography.body2,
+  height: "600px",
   padding: theme.spacing(1),
   overflowY: "scroll",
   // textAlign: "center",
@@ -44,12 +47,9 @@ const SelectQuery = () => {
   const [data, setData] = useState("");
   const [userConn, setUserConn] = useState("");
 
-
-
   const handleChange = (event) => {
     setUserConn(event.target.value);
   };
-
 
   const handleSubmit = async () => {
     const url = "https://172.20.1.97:3009/api-serv/testOraQuery";
@@ -63,7 +63,7 @@ const SelectQuery = () => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response.status);
+      // console.log(response.status);
       if (response.status == 200) {
         const message = "Consulta generada";
         enqueueSnackbar(message, {
@@ -75,7 +75,6 @@ const SelectQuery = () => {
         });
         setData(response.data);
       }
-      
     } catch (error) {
       console.log(error);
     }
@@ -93,9 +92,14 @@ const SelectQuery = () => {
             <Typography variant="h5" gutterBottom>
               Consulta a Oracle{" "}
               <span style={{ color: "red" }}>(Siempre agrega un WHERE)</span>
-              <a href={`https://172.20.1.97:3009/api-serv/testApi`} target="_blank" rel="noopener noreferrer">api</a>
+              <a
+                href={`https://172.20.1.97:3009/api-serv/testApi`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                api
+              </a>
             </Typography>
-
 
             <Grid container spacing={3}>
               <Grid xs={6}>
@@ -107,15 +111,22 @@ const SelectQuery = () => {
                     multiline
                     label="Escribe o pega algo"
                     variant="standard"
+                    sx={{
+                      height: 300,
+                      overflowY: "auto",
+                    }}
+                    InputProps={{
+                      // style: { maxHeight: "400px", overflow: "auto" },
+                    }}
                   />
-
-
                 </Box>
               </Grid>
               <Grid xs={6}>
                 <Box sx={{ marginBottom: 2 }}>
                   <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">Esquemas</InputLabel>
+                    <InputLabel id="demo-simple-select-label">
+                      Esquemas
+                    </InputLabel>
                     <Select
                       labelId="demo-simple-select-label"
                       id="demo-simple-select"
@@ -142,15 +153,10 @@ const SelectQuery = () => {
                   </Button>
                 </Box>
               </Grid>
-
-
             </Grid>
-
           </Item>
         </Grid>
-
       </Grid>
-
 
       <Grid container spacing={2}>
         <Grid xs={12}>
@@ -159,11 +165,36 @@ const SelectQuery = () => {
               Respuesta:
             </Typography>
             <pre>{JSON.stringify(data, null, 2)}</pre>
+          <TableAnswer answer={data}/>
           </ItemRespuesta>
         </Grid>
       </Grid>
     </Box>
   );
 };
+
+const TableAnswer = ({answer}) => {
+
+    // 1. Genera las columnas dinámicamente basándote en las claves del primer objeto
+    const columns = Object.keys(answer[0] || {}).map((key) => ({
+      name: key.toUpperCase(),      // Nombre de la columna (en mayúsculas)
+      selector: (row) => row[key],  // Accede a cada propiedad dinámica
+      sortable: true,               // Habilita la ordenación
+      wrap: true                    // Envuelve el texto si es muy largo
+    }));
+  
+    return (
+      <DataTable
+        columns={columns}       // Pasa las columnas generadas
+        data={answer}             // Pasa los datos
+        pagination              // Agrega paginación
+        striped                 // Filas con rayado alterno
+        highlightOnHover        // Resalta al pasar el cursor
+        responsive              // Hace la tabla adaptable a pantallas móviles
+        // defaultSortField="SOLICITUD" // Campo predeterminado de ordenación
+        
+      />
+    );
+}
 
 export default SelectQuery;
