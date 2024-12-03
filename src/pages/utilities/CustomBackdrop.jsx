@@ -3,7 +3,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
-const CustomBackdrop = ({open}) => {
+const CustomBackdrop = ({open,text}) => {
   return (
     <>
 
@@ -19,7 +19,7 @@ const CustomBackdrop = ({open}) => {
           }}
         >
           <Typography variant="h6" component="h6" sx={{ mb: 3 }}>
-            Consultando datos...
+            {text}...
           </Typography>
           <CircularProgress sx={{ fontSize: 60 }} color="primary" />
         </Box>

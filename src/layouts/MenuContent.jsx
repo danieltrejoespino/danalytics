@@ -19,10 +19,11 @@ const mainListItems = [
   { text: 'Query', icon: <StorageIcon /> },
   { text: 'Caja de ahorro', icon: <AccountBalanceIcon /> },
   { text: 'Index10', icon: <GroupIcon /> },
-  // { text: 'Extensiones', icon: <PhoneEnabledIcon /> },
-  // { text: 'Re etiquetado citibanco', icon: <FmdBadIcon /> },
   { text: 'Bines', icon: <AddCardIcon /> },
+  { text: 'Extensiones', icon: <PhoneEnabledIcon /> },
+  { text: 'Re etiquetado citibanco', icon: <FmdBadIcon /> },
 ];
+
 
 export default function MenuContent({ actionMenu, setSelectedComponent }) {
   const [selectedIndex, setSelectedIndex] = useState(0); // Estado para almacenar el índice seleccionado

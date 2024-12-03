@@ -8,6 +8,8 @@ import { useState } from "react";
 import Alert from "@mui/material/Alert";
 import CustomBackdrop from "../utilities/CustomBackdrop";
 import axios from "axios";
+import { enqueueSnackbar } from 'notistack'
+const URL = import.meta.env.VITE_API_URL;
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#F5F6FA",
@@ -43,7 +45,9 @@ GROUP BY customerid
 
 const ReEtiquetadoCitiBanco = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [rsptaDuplicados, setRsptaDuplicados] = useState("prueba dsa");
+  const [rsptaDuplicados, setRsptaDuplicados] = useState('');
+  const [ready, setReady] = useState(false);
+  const [textLoading, setTextLoading] = useState('')
 
   const [formValues, setFormValues] = useState({
     date1: "",
@@ -58,44 +62,84 @@ const ReEtiquetadoCitiBanco = () => {
     }));
   };
 
-  const handleSearch = () => {
-    const duplicado = async () => {
-      setOpenBackdrop(true);
-      try {
-        const fechas = {
-          fechaInicio: formValues.date1,
-          fechaFin: formValues.date2,
-        };
+  const handleSearch = async () => {
 
-        const url = "http://172.23.62.183:3000/api/consultaDuplicadosGrab";
-        const rspta = await axios.post(url, fechas, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (rspta.data[0].duplicados == 1) {
-          setRsptaDuplicados("Existen duplicados en este rango de fechas");
-        } else {
-          setRsptaDuplicados("Sin duplicados en este rango de fechas");
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setOpenBackdrop(false);
-      }
+    if (!formValues.date1 || !formValues.date2) {
+      const message = 'Debes agregar ambas fechas'
+      enqueueSnackbar(message, { variant: 'warning', anchorOrigin: { vertical: 'top', horizontal: 'right', }} )
+      return false
+  }
+    setTextLoading('Consultando datos')
+    setOpenBackdrop(true);
+    const fechas = {
+      fechaInicio: formValues.date1,
+      fechaFin: formValues.date2,
     };
+    // console.log(fechas)
+    // return false
+    const ENDPOINT = URL + "general/reEtiquetadoConsultaDuplicados";
 
-    duplicado();
+    try {
+      const response = await axios.post(ENDPOINT, fechas);
+
+      if (response.status == 200) {
+        const {duplicados} = response.data[0]
+        setRsptaDuplicados (duplicados == 1 ? 'Con duplicados': 'Sin duplicados')
+        setReady(true)
+      }
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
+    finally{
+      setOpenBackdrop(false);
+    }
 
   };
-  const handleSubmit = () => {
-    console.log(formValues);
+
+
+  const handleSubmit = async() => {
+
+    if (!formValues.date1 || !formValues.date2) {
+      const message = 'Debes agregar ambas fechas'
+      enqueueSnackbar(message, { variant: 'warning', anchorOrigin: { vertical: 'top', horizontal: 'right', }} )
+      return false
+  }
+    setTextLoading('Re etiquetando grabaciones')
+    setOpenBackdrop(true);
+    const fechas = {
+      fechaInicio: formValues.date1,
+      fechaFin: formValues.date2,
+    };
+    // console.log(fechas)
+    // return false
+    const ENDPOINT = URL + "general/reEtiquetado";
+
+    try {
+      const response = await axios.post(ENDPOINT, fechas);
+
+      console.log(response)
+      if (response.status == 200) {
+        // const {duplicados} = response.data[0]
+        setRsptaDuplicados (1)
+        setReady(true)
+      }
+      
+      
+    } catch (error) {
+      console.log(error);
+    }
+    finally{
+      setOpenBackdrop(false);
+    }
+
+
   };
 
   return (
     <>
-      <CustomBackdrop open={openBackdrop} />
+      <CustomBackdrop open={openBackdrop} text = {textLoading} />
 
       <Box sx={{ width: "100%", flexGrow: 1 }}>
         <Grid container spacing={2}>
@@ -154,9 +198,9 @@ const ReEtiquetadoCitiBanco = () => {
                 </Grid>
                 <Grid xs={3}>
                   
-                  {rsptaDuplicados && (
+                  {ready && (
                     <Alert variant="filled" severity="warning">
-                      {rsptaDuplicados}
+                    <pre>{JSON.stringify(rsptaDuplicados, null, 2)}</pre>
                     </Alert>
                   )}
                 </Grid>

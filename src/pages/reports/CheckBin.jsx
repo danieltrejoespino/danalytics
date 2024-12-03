@@ -67,7 +67,7 @@ export default function CheckBin() {
 
   return (
     <>
-      <CustomBackdrop open={openBackdrop} />
+      <CustomBackdrop open={openBackdrop} text = "Consultando datos"/>
 
       <Box sx={{ width: "100%", flexGrow: 1 }}>
         <Grid container spacing={2}>
