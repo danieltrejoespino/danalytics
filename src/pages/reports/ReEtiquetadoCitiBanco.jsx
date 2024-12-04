@@ -123,7 +123,7 @@ const ReEtiquetadoCitiBanco = () => {
     try {
       const response = await axios.post(ENDPOINT, fechas);
 
-      console.log(response.data);
+      // console.log(response.data);
       if (response.status == 200) {
         // const {duplicados} = response.data[0]
         setRsptaEtiquetado(response.data);
