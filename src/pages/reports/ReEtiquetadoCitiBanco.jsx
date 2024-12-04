@@ -70,7 +70,7 @@ const ReEtiquetadoCitiBanco = () => {
       const message = "Debes agregar ambas fechas";
       enqueueSnackbar(message, {
         variant: "warning",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        anchorOrigin: { vertical: "bottom", horizontal: "center" },
       });
       return false;
     }
@@ -106,7 +106,7 @@ const ReEtiquetadoCitiBanco = () => {
       const message = "Debes agregar ambas fechas";
       enqueueSnackbar(message, {
         variant: "warning",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        anchorOrigin: { vertical: "bottom", horizontal: "center" },
       });
       return false;
     }

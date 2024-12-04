@@ -8,8 +8,9 @@ import { useState } from "react";
 import Alert from "@mui/material/Alert";
 import CustomBackdrop from "../utilities/CustomBackdrop";
 import axios from "axios";
-
+import DataTable, { createTheme } from "react-data-table-component";
 const URL = import.meta.env.VITE_API_URL;
+import { enqueueSnackbar } from "notistack";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#F5F6FA",
@@ -29,10 +30,10 @@ export default function CheckBin() {
 
   const [openBackdrop, setOpenBackdrop] = useState(false);
   const [ready, setReady] = useState(false);
-  const [bin, setBin] = useState({});
+  const [bin, setBin] = useState();
 
   const [formValues, setFormValues] = useState({
-    bin: "",
+    bin: "477212",
   });
 
   const handleDate = (e) => {
@@ -44,6 +45,17 @@ export default function CheckBin() {
   };
 
   const handleSubmit = async () => {
+
+    if (formValues.bin.length <6) {
+      const message = "BIN debe ser a 6 digitos";
+      enqueueSnackbar(message, {
+        variant: "error",
+        anchorOrigin: { vertical: "bottom", horizontal: "center" },
+      });
+      return false;
+    }
+
+
     setOpenBackdrop(true);
     const ENDPOINT = URL + "general/bin";
     let data = {
@@ -54,20 +66,43 @@ export default function CheckBin() {
       const response = await axios.post(ENDPOINT, data);
 
       if (response.data.code == 200) {
-        // console.log(response.data.BIN)
-        setBin (response.data.BIN)
-      }
+        const {
+          valid,
+          number,
+          brand,
+          type,
+          level,
+          currency,
+          issuer: { name: issuerName },
+          country: { name: countryName },
+          country: { currency: countryCurrency },
+        } = response.data.BIN;
+        const dataUseful = {
+          BIN: number,
+          VALIDA: valid ? "SI" : "NO",
+          TIPO: type,
+          MARCA: brand,
+          NIVEL: level,
+          DIVISA: currency,
+          EMISOR: issuerName,
+          PAIS: countryName,
+          DIVISA_PAIS: countryCurrency
 
-      setReady(true)
-      setOpenBackdrop(false);
+        }
+        setBin(dataUseful)
+        setReady(true)
+
+      }
     } catch (error) {
       console.log(error);
+    } finally {
+      setOpenBackdrop(false);
     }
   };
 
   return (
     <>
-      <CustomBackdrop open={openBackdrop} text = "Consultando datos"/>
+      <CustomBackdrop open={openBackdrop} text="Consultando datos" />
 
       <Box sx={{ width: "100%", flexGrow: 1 }}>
         <Grid container spacing={2}>
@@ -115,11 +150,13 @@ export default function CheckBin() {
               </Grid>
 
               <Grid container spacing={3}>
-              {ready && (
-                    <pre>{JSON.stringify(bin, null, 2)}</pre>
+                <Grid xs={12}>
+                  {/* <pre>{JSON.stringify(bin, null, 2)}</pre> */}
+                  {ready && (
+                    <TableAnswer answer={[bin]} />
                   )}
-
-            </Grid>
+                </Grid>
+              </Grid>
             </Item>
           </Grid>
         </Grid>
@@ -127,4 +164,25 @@ export default function CheckBin() {
     </>
   );
 }
-// https://rapidapi.com/jfhe88/api/rfc-generator-mexico/playground/53aa317ee4b0f2c97546e929
+
+
+
+const TableAnswer = ({ answer }) => {  
+  const columns = Object.keys(answer[0] || {}).map((key) => ({
+    name: key.toUpperCase(),
+    selector: (row) => row[key],
+    sortable: true,             
+    wrap: true                  
+  }));
+
+  return (
+    <DataTable
+      columns={columns}
+      data={answer}    
+      // pagination    
+      striped          
+      highlightOnHover 
+      responsive       
+    />
+  );
+}

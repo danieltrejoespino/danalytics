@@ -46,7 +46,7 @@ const MessageRender = ({ text }) => {
     >
       <Avatar
         alt={text.NAME_USER}
-        src={`https://robohash.org/${text.NAME_USER}.png?set=set4`}
+        src={`https://robohash.org/${text.NAME_USER}.png?set=set3`}
         sx={{ marginRight: 1 }}
       />
 
