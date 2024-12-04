@@ -8,7 +8,7 @@ import { useState } from "react";
 import Alert from "@mui/material/Alert";
 import CustomBackdrop from "../utilities/CustomBackdrop";
 import axios from "axios";
-import { enqueueSnackbar } from 'notistack'
+import { enqueueSnackbar } from "notistack";
 const URL = import.meta.env.VITE_API_URL;
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -45,9 +45,12 @@ GROUP BY customerid
 
 const ReEtiquetadoCitiBanco = () => {
   const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [rsptaDuplicados, setRsptaDuplicados] = useState('');
+  const [rsptaDuplicados, setRsptaDuplicados] = useState("");
   const [ready, setReady] = useState(false);
-  const [textLoading, setTextLoading] = useState('')
+  const [textLoading, setTextLoading] = useState("");
+
+  const [readyEtiquetado, setReadyEtiquetado] = useState(false);
+  const [rsptaEtiquetado, setRsptaEtiquetado] = useState({});
 
   const [formValues, setFormValues] = useState({
     date1: "",
@@ -63,13 +66,15 @@ const ReEtiquetadoCitiBanco = () => {
   };
 
   const handleSearch = async () => {
-
     if (!formValues.date1 || !formValues.date2) {
-      const message = 'Debes agregar ambas fechas'
-      enqueueSnackbar(message, { variant: 'warning', anchorOrigin: { vertical: 'top', horizontal: 'right', }} )
-      return false
-  }
-    setTextLoading('Consultando datos')
+      const message = "Debes agregar ambas fechas";
+      enqueueSnackbar(message, {
+        variant: "warning",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+      return false;
+    }
+    setTextLoading("Consultando datos");
     setOpenBackdrop(true);
     const fechas = {
       fechaInicio: formValues.date1,
@@ -83,30 +88,29 @@ const ReEtiquetadoCitiBanco = () => {
       const response = await axios.post(ENDPOINT, fechas);
 
       if (response.status == 200) {
-        const {duplicados} = response.data[0]
-        setRsptaDuplicados (duplicados == 1 ? 'Con duplicados': 'Sin duplicados')
-        setReady(true)
+        const { duplicados } = response.data[0];
+        setRsptaDuplicados(
+          duplicados == 1 ? "Con duplicados" : "Sin duplicados"
+        );
+        setReady(true);
       }
-      
-      
     } catch (error) {
       console.log(error);
-    }
-    finally{
+    } finally {
       setOpenBackdrop(false);
     }
-
   };
 
-
-  const handleSubmit = async() => {
-
+  const handleSubmit = async () => {
     if (!formValues.date1 || !formValues.date2) {
-      const message = 'Debes agregar ambas fechas'
-      enqueueSnackbar(message, { variant: 'warning', anchorOrigin: { vertical: 'top', horizontal: 'right', }} )
-      return false
-  }
-    setTextLoading('Re etiquetando grabaciones')
+      const message = "Debes agregar ambas fechas";
+      enqueueSnackbar(message, {
+        variant: "warning",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+      return false;
+    }
+    setTextLoading("Re etiquetando grabaciones");
     setOpenBackdrop(true);
     const fechas = {
       fechaInicio: formValues.date1,
@@ -119,27 +123,22 @@ const ReEtiquetadoCitiBanco = () => {
     try {
       const response = await axios.post(ENDPOINT, fechas);
 
-      console.log(response)
+      console.log(response.data);
       if (response.status == 200) {
         // const {duplicados} = response.data[0]
-        setRsptaDuplicados (1)
-        setReady(true)
+        setRsptaEtiquetado(response.data);
+        setReadyEtiquetado(true);
       }
-      
-      
     } catch (error) {
       console.log(error);
-    }
-    finally{
+    } finally {
       setOpenBackdrop(false);
     }
-
-
   };
 
   return (
     <>
-      <CustomBackdrop open={openBackdrop} text = {textLoading} />
+      <CustomBackdrop open={openBackdrop} text={textLoading} />
 
       <Box sx={{ width: "100%", flexGrow: 1 }}>
         <Grid container spacing={2}>
@@ -197,14 +196,16 @@ const ReEtiquetadoCitiBanco = () => {
                   </Box>
                 </Grid>
                 <Grid xs={3}>
-                  
                   {ready && (
                     <Alert variant="filled" severity="warning">
-                    <pre>{JSON.stringify(rsptaDuplicados, null, 2)}</pre>
+                      <pre>{JSON.stringify(rsptaDuplicados, null, 2)}</pre>
                     </Alert>
                   )}
                 </Grid>
-                <Grid xs={12}>
+              </Grid>
+
+              <Grid container spacing={3}>
+                <Grid xs={3}>
                   <Box sx={{ marginBottom: 2 }}>
                     <Button
                       variant="Outlined"
@@ -216,29 +217,22 @@ const ReEtiquetadoCitiBanco = () => {
                       <ArrowForwardIosIcon />
                     </Button>
                   </Box>
-
-                  <Grid xs={6}>
-                    <Typography variant="h6" gutterBottom>
-                      Query postgres
-                    </Typography>
-                    <pre>
-                      <code>{QueryPostgress}</code>
-                    </pre>
-                  </Grid>
-                  <Grid xs={6}>
-                    <Typography variant="h6" gutterBottom>
-                      Query Oracle
-                    </Typography>
-                    <pre>
-                      <code>{QueryOracle}</code>
-                    </pre>
-                  </Grid>
+                </Grid>
+                <Grid xs={9}>
+                  <Box
+                    sx={{
+                      height: 300,
+                      overflowY: "auto",
+                    }}
+                    variant="filled"
+                    severity="warning"
+                  >
+                    {readyEtiquetado && (
+                      <pre>{JSON.stringify(rsptaEtiquetado, null, 2)}</pre>
+                    )}
+                  </Box>
                 </Grid>
               </Grid>
-
-              {/* <Grid container spacing={3}>
-
-            </Grid> */}
             </Item>
           </Grid>
         </Grid>
@@ -248,3 +242,27 @@ const ReEtiquetadoCitiBanco = () => {
 };
 
 export default ReEtiquetadoCitiBanco;
+
+{
+  /* <Grid xs={12}>
+<Grid xs={6}>ddd</Grid>
+<Grid xs={6}>ddd</Grid>
+
+<Grid xs={6}>
+  <Typography variant="h6" gutterBottom>
+    Query postgres
+  </Typography>
+  <pre>
+    <code>{QueryPostgress}</code>
+  </pre>
+</Grid>
+<Grid xs={6}>
+  <Typography variant="h6" gutterBottom>
+    Query Oracle
+  </Typography>
+  <pre>
+    <code>{QueryOracle}</code>
+  </pre>
+</Grid>
+</Grid>  */
+}
