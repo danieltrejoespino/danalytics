@@ -64,6 +64,25 @@ export default function PhoneExtensions() {
         <Grid container spacing={2}>
           <Grid xs={12}>
             <Item>
+
+
+            <Grid container spacing={3}>
+                <Grid xs={12}>
+                <Typography
+                variant="h6"
+                gutterBottom
+                // component="a"
+                // href="https://bin-ip-checker.p.rapidapi.com"
+                // target="_blank"
+                // rel="noopener noreferrer"
+              >
+                Reporte de extensiones Impulse
+              </Typography>
+                </Grid>
+              </Grid>
+
+
+
               <Grid container spacing={3}>
                 <Grid xs={12}>
                   {/* <pre>{JSON.stringify(bin, null, 2)}</pre> */}
@@ -79,7 +98,6 @@ export default function PhoneExtensions() {
                       responsive
                     />
                   )}
-                  {/* <TableAnswer answer={phoneExt} /> */}
                 </Grid>
               </Grid>
             </Item>
