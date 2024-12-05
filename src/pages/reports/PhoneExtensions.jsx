@@ -5,9 +5,9 @@ import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import CustomBackdrop from "../utilities/CustomBackdrop";
 import axios from "axios";
-import DataTable from "react-data-table-component";
+import DataTable, { createTheme } from "react-data-table-component";
+import { useTheme } from "@mui/material/styles";
 const URL = import.meta.env.VITE_API_URL;
-
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: "#F5F6FA",
@@ -23,10 +23,38 @@ const Item = styled(Paper)(({ theme }) => ({
   }),
 }));
 
+createTheme("lightTheme", {
+  text: {
+    primary: "#000000",
+    secondary: "#2c2c2c",
+  },
+  background: {
+    default: "#F5F6FA",
+  },
+  divider: {
+    default: "#e0e0e0",
+  },
+});
+
+createTheme("darkTheme", {
+  text: {
+    primary: "#EDEFF4",
+    secondary: "#b9b9b9",
+  },
+  background: {
+    default: "#3e5266",
+  },
+  divider: {
+    default: "#444444",
+  },
+});
+
 export default function PhoneExtensions() {
   const [openBackdrop, setOpenBackdrop] = useState(true);
   const [ready, setReady] = useState(false);
   const [phoneExt, setPhoneExt] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const theme = useTheme();
 
   useEffect(() => {
     const getExt = async () => {
@@ -56,6 +84,38 @@ export default function PhoneExtensions() {
     wrap: true,
   }));
 
+  const paginationOptions = {
+    rowsPerPageText: "Filas por página:",
+    rangeSeparatorText: "de",
+    selectAllRowsItem: true,
+    selectAllRowsItemText: "Todos",
+  };
+
+
+
+
+
+const filteredData =
+searchText.length === 0
+  ? phoneExt
+  : phoneExt.filter(
+      (item) =>
+        (item.NOMBRE_MOSTRAR &&
+          item.NOMBRE_MOSTRAR.toString()
+            .toLowerCase()
+            .includes(searchText.toLowerCase())) ||
+        (item.EXTENSION &&
+          item.EXTENSION.toLowerCase().includes(searchText.toLowerCase())) ||
+        (item.AREA &&
+          item.AREA.toString()
+            .toLowerCase()
+            .includes(searchText.toLowerCase()))
+    );
+
+ 
+
+
+
   return (
     <>
       <CustomBackdrop open={openBackdrop} text="Consultando datos" />
@@ -64,35 +124,45 @@ export default function PhoneExtensions() {
         <Grid container spacing={2}>
           <Grid xs={12}>
             <Item>
-
-
-            <Grid container spacing={3}>
-                <Grid xs={12}>
-                <Typography
-                variant="h6"
-                gutterBottom
-                // component="a"
-                // href="https://bin-ip-checker.p.rapidapi.com"
-                // target="_blank"
-                // rel="noopener noreferrer"
-              >
-                Reporte de extensiones Impulse
-              </Typography>
+              <Grid container spacing={3}>
+                <Grid xs={6}>
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    // component="a"
+                    // href="https://bin-ip-checker.p.rapidapi.com"
+                    // target="_blank"
+                    // rel="noopener noreferrer"
+                  >
+                    Reporte de extensiones Impulse
+                  </Typography>
+                </Grid>
+                <Grid xs={6}>
+                  <TextField
+                    label="Escribe algo para buscar"
+                    variant="outlined"
+                    fullWidth
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                  />
                 </Grid>
               </Grid>
 
-
-
               <Grid container spacing={3}>
                 <Grid xs={12}>
-                  {/* <pre>{JSON.stringify(bin, null, 2)}</pre> */}
                   {ready && (
                     <DataTable
                       columns={columns}
-                      data={phoneExt}
+                      data={filteredData}
+                      expandableRows
                       pagination
-                      striped
-                      highlightOnHover
+                      // title="Index 10"
+                      theme={
+                        theme.palette.mode === "dark"
+                          ? "darkTheme"
+                          : "lightTheme"
+                      }
+                      paginationComponentOptions={paginationOptions}
                       fixedHeaderScrollHeight="800px"
                       fixedHeader
                       responsive
@@ -107,4 +177,3 @@ export default function PhoneExtensions() {
     </>
   );
 }
- 
