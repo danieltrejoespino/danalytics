@@ -21,7 +21,7 @@ const mainListItems = [
   { text: 'Index10', icon: <GroupIcon /> },
   { text: 'Bines', icon: <AddCardIcon /> },
   { text: 'Extensiones', icon: <PhoneEnabledIcon /> },
-  { text: 'Re etiquetado citibanco', icon: <FmdBadIcon /> },
+  // { text: 'Re etiquetado citibanco', icon: <FmdBadIcon /> },
 ];
 
 
