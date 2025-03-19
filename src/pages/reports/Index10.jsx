@@ -65,19 +65,30 @@ const paginationOptions = {
 
 export default function Index10() {
   const [data, setData] = useState([]);
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState({
+    nomina:'',
+    nombre:'',
+    depa:''
+  
+  });
 
   const [searchData, setSearchData] = useState({
-    fecha: '',
+    fecha: "",
     specify: "",
-    hora: "",    
+    hora: "",
   });
 
 
-  const handleSearch = (e) => {
-    setSearchData({ ...searchData, [e.target.name]: e.target.value })
-  }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setSearchText((prevState) => ({
+      ...prevState,[name]: value }));
 
+  };
+
+  // const handleSearch = (e) => {
+  //   setSearchData({ ...searchData, [e.target.name]: e.target.value });
+  // };
 
   const columns = [
     {
@@ -156,7 +167,7 @@ export default function Index10() {
       fecha: searchData.fecha,
       specify: searchData.specify,
       hora: searchData.hora,
-      access: '',
+      access: "",
     },
   };
 
@@ -169,7 +180,7 @@ export default function Index10() {
         },
       })
       .then((result) => {
-        console.log(result.data);
+        // console.log(result.data);
         setData(result.data);
       })
       .catch((err) => {
@@ -177,112 +188,71 @@ export default function Index10() {
       });
   }, []);
 
-  const filteredData =
-    searchText.length === 0
-      ? data
-      : data.filter(
-          (item) =>
-            (item.CLAVE &&
-              item.CLAVE.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase())) ||
-            (item.NOMBRE &&
-              item.NOMBRE.toLowerCase().includes(searchText.toLowerCase())) ||
-            (item.APELLIDO_PATERNO &&
-              item.APELLIDO_PATERNO.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase())) ||
-            (item.APELLIDO_MATERNO &&
-              item.APELLIDO_MATERNO.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase())) ||
-            (item.FECHA_NAC &&
-              item.FECHA_NAC.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase())) ||
-            (item.NOMBRE_DEPARTAMENTO &&
-              item.NOMBRE_DEPARTAMENTO.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase())) ||
-            (item.EMPRESA &&
-              item.EMPRESA.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase())) ||
-            (item.EQUIPO &&
-              item.EQUIPO.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase())) ||
-            (item.HORA &&
-              item.HORA.toString()
-                .toLowerCase()
-                .includes(searchText.toLowerCase()))
-        );
+  const filteredData = data.filter((item) => {
+    const matchesNomina =
+      searchText.nomina.length === 0 || 
+      (item.CLAVE && item.CLAVE.toString().toLowerCase().includes(searchText.nomina.toLowerCase()));
+  
+    const matchesNombre =
+      searchText.nombre.length === 0 || 
+      ((item.NOMBRE && item.NOMBRE.toLowerCase().includes(searchText.nombre.toLowerCase())) ||
+      (item.APELLIDO_PATERNO && item.APELLIDO_PATERNO.toString().toLowerCase().includes(searchText.nombre.toLowerCase())) ||
+      (item.APELLIDO_MATERNO && item.APELLIDO_MATERNO.toString().toLowerCase().includes(searchText.nombre.toLowerCase())));
+  
+    const matchesDepartamento =
+      searchText.depa.length === 0 || 
+      (item.NOMBRE_DEPARTAMENTO && item.NOMBRE_DEPARTAMENTO.toString().toLowerCase().includes(searchText.depa.toLowerCase()));
+  
+    return matchesNomina && matchesNombre && matchesDepartamento;
+  });
 
   return (
     <>
-<Box sx={{ width: "100%", flexGrow: 1, marginBottom: 2 }}>
-  <Item>
-    <Typography variant="h5" gutterBottom>
-      Top caja de ahorro
-    </Typography>
-    <Grid container spacing={2}>
-      <Grid xs={4}>
-        <Typography variant="h6" gutterBottom>
-          Cuadro de búsqueda
-        </Typography>
-        <TextField
-          label="Escribe algo para buscar"
-          variant="outlined"
-          fullWidth
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-        />
-      </Grid>
-      <Grid xs={8}>
-        <Typography variant="h6" gutterBottom>
-          Consultar datos
-        </Typography>
-        <Grid container spacing={2} justifyContent="center" alignItems="center">
-          <Grid xs={3} display="flex" justifyContent="center">
-            <TextField
-              label="Fecha"
-              variant="outlined"
-              fullWidth
-              value={searchData.fecha}
-              onChange={handleSearch}
-            />
+      <Box sx={{ width: "100%", flexGrow: 1, marginBottom: 2 }}>
+        <Item>
+          <Grid container spacing={2}>
+            <Grid xs={12}>
+              <Grid
+                container
+                spacing={2}
+                justifyContent="center"
+                alignItems="center"
+              >
+                <Grid xs={4} display="flex" justifyContent="center">
+                <TextField
+                label="Buscar por Nomina"
+                variant="outlined"
+                name="nomina"
+                fullWidth
+                value={searchText.nomina}
+                onChange={handleChange}
+              />
+                </Grid>
+                <Grid xs={4} display="flex" justifyContent="center">
+                <TextField
+                label="Buscar por Nombre"
+                variant="outlined"
+                name="nombre"
+                fullWidth
+                value={searchText.nombre}
+                onChange={handleChange}
+              />
+                </Grid>
+                <Grid xs={4} display="flex" justifyContent="center">
+                <TextField
+                label="Buscar por Departamento"
+                variant="outlined"
+                name="depa"
+                fullWidth
+                value={searchText.depa}
+                onChange={handleChange}
+              />
+                </Grid>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid xs={3} display="flex" justifyContent="center">
-            <TextField
-              label="Hora"
-              variant="outlined"
-              fullWidth
-              value={searchData.hora}
-              onChange={handleSearch}
-            />
-          </Grid>
-          <Grid xs={3} display="flex" justifyContent="center">
-            <TextField
-              label="Nomina"
-              variant="outlined"
-              fullWidth
-              value={searchData.specify}
-              onChange={handleSearch}
-            />
-          </Grid>
-          <Grid xs={3} display="flex" justifyContent="center">
-            <TextField
-              label="Enviar"
-              variant="outlined"
-              fullWidth              
-              // onChange={handleSearch}
-            />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  </Item>
-</Box>
+        </Item>
+      </Box>
 
       <DataTable
         columns={columns}

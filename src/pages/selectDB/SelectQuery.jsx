@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DataTable, { createTheme } from "react-data-table-component";
-
+import { CSVLink } from "react-csv";
 import { Typography, Box, TextField, Button, IconButton } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { styled } from "@mui/material/styles";
@@ -112,12 +112,14 @@ const SelectQuery = () => {
                     label="Escribe o pega algo"
                     variant="standard"
                     sx={{
-                      height: 300,
+                      height: 200,
                       overflowY: "auto",
                     }}
-                    InputProps={{
-                      // style: { maxHeight: "400px", overflow: "auto" },
-                    }}
+                    InputProps={
+                      {
+                        // style: { maxHeight: "400px", overflow: "auto" },
+                      }
+                    }
                   />
                 </Box>
               </Grid>
@@ -165,7 +167,26 @@ const SelectQuery = () => {
               Respuesta:
             </Typography>
             <pre>{JSON.stringify(data, null, 2)}</pre>
-          <TableAnswer answer={data}/>
+            <CSVLink
+              data={data}
+              filename={"data.csv"}
+              className="btn btn-primary"
+              target="_blank"
+              style={{
+                backgroundColor: "#007bff",
+                color: "white",
+                padding: "10px 15px",
+                textDecoration: "none",
+                borderRadius: "5px",
+                marginBottom: "10px",
+                border: "none",
+                cursor: "pointer",
+              }}
+            >
+              Descargar CSV
+            </CSVLink>
+
+            <TableAnswer answer={data} />
           </ItemRespuesta>
         </Grid>
       </Grid>
@@ -173,28 +194,28 @@ const SelectQuery = () => {
   );
 };
 
-const TableAnswer = ({answer}) => {
+const TableAnswer = ({ answer }) => {
+  // 1. Genera las columnas dinámicamente basándote en las claves del primer objeto
+  const columns = Object.keys(answer[0] || {}).map((key) => ({
+    name: key.toUpperCase(), // Nombre de la columna (en mayúsculas)
+    selector: (row) => row[key], // Accede a cada propiedad dinámica
+    sortable: true, // Habilita la ordenación
+    wrap: true, // Envuelve el texto si es muy largo
+  }));
 
-    // 1. Genera las columnas dinámicamente basándote en las claves del primer objeto
-    const columns = Object.keys(answer[0] || {}).map((key) => ({
-      name: key.toUpperCase(),      // Nombre de la columna (en mayúsculas)
-      selector: (row) => row[key],  // Accede a cada propiedad dinámica
-      sortable: true,               // Habilita la ordenación
-      wrap: true                    // Envuelve el texto si es muy largo
-    }));
-  
-    return (
-      <DataTable
-        columns={columns}       // Pasa las columnas generadas
-        data={answer}             // Pasa los datos
-        pagination              // Agrega paginación
-        striped                 // Filas con rayado alterno
-        highlightOnHover        // Resalta al pasar el cursor
-        responsive              // Hace la tabla adaptable a pantallas móviles
-        // defaultSortField="SOLICITUD" // Campo predeterminado de ordenación
-        
-      />
-    );
-}
+  return (
+    <DataTable
+      columns={columns} // Pasa las columnas generadas
+      data={answer} // Pasa los datos
+      pagination
+      paginationPerPage={10} // Número de filas por página
+      paginationRowsPerPageOptions={[5, 10, 20, 50, 100, 200]} // Opciones para el número de filas por página
+      striped // Filas con rayado alterno
+      highlightOnHover // Resalta al pasar el cursor
+      responsive // Hace la tabla adaptable a pantallas móviles
+      // defaultSortField="SOLICITUD" // Campo predeterminado de ordenación
+    />
+  );
+};
 
 export default SelectQuery;

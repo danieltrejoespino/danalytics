@@ -311,7 +311,7 @@ export default function Utilities() {
             </Item>
           </Grid>
 
-          <Grid xs={6}>
+          {/* <Grid xs={6}>
             <Item>
               <Typography variant="h5" gutterBottom>
                 SMS Impulse
@@ -335,7 +335,7 @@ export default function Utilities() {
                 <Grid xs={4}>ss</Grid>
               </Grid>
             </Item>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
     </>
