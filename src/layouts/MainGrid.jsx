@@ -11,6 +11,7 @@ import Index10 from "../pages/reports/Index10";
 import PhoneExtensions from "../pages/reports/PhoneExtensions";
 import ReEtiquetadoCitiBanco from "../pages/reports/ReEtiquetadoCitiBanco";
 import CheckBin from "../pages/reports/CheckBin";
+import IpApplications from "../pages/reports/IpApplications";
 
 export default function MainGrid({selectedComponent}) {
   const data = [
@@ -22,6 +23,7 @@ export default function MainGrid({selectedComponent}) {
     { idCom:6, name: "Bines", component: CheckBin},
     { idCom:7, name: "Extensiones", component: PhoneExtensions},
     // { idCom:8, name: "Re etiquetado citibanco", component: ReEtiquetadoCitiBanco},
+    { idCom:8, name: "IPs", component: IpApplications},
   ];
   const selectedData = data.find((item) => item.idCom === selectedComponent);
   const ComponentToRender = selectedData ? selectedData.component : null;

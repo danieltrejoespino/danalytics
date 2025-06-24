@@ -1,41 +1,18 @@
 import { useState, useEffect } from "react";
 import { Typography, Box, TextField, Button, IconButton } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
+
 import CustomBackdrop from "../utilities/CustomBackdrop";
 import axios from "axios";
-import DataTable, { createTheme } from "react-data-table-component";
+import DataTable from "react-data-table-component";
 import { useTheme } from "@mui/material/styles";
-import Item from "../../components/ItemComponent"
+import Item  from "../../components/ItemComponent";
 const URL = import.meta.env.VITE_API_URL;
 
 
-createTheme("lightTheme", {
-  text: {
-    primary: "#000000",
-    secondary: "#2c2c2c",
-  },
-  background: {
-    default: "#F5F6FA",
-  },
-  divider: {
-    default: "#e0e0e0",
-  },
-});
 
-createTheme("darkTheme", {
-  text: {
-    primary: "#EDEFF4",
-    secondary: "#b9b9b9",
-  },
-  background: {
-    default: "#3e5266",
-  },
-  divider: {
-    default: "#444444",
-  },
-});
 
-export default function PhoneExtensions() {
+export default function IdApplications() {
   const [openBackdrop, setOpenBackdrop] = useState(true);
   const [ready, setReady] = useState(false);
   const [phoneExt, setPhoneExt] = useState([]);
@@ -45,7 +22,7 @@ export default function PhoneExtensions() {
   useEffect(() => {
     const getExt = async () => {
       try {
-        const ENDPOINT = URL + "general/getPhoneExtensions";
+        const ENDPOINT = URL + "general/getIpsApp";
         const rspta = await axios.get(ENDPOINT, {
           headers: {
             "Content-Type": "application/json",
@@ -76,10 +53,6 @@ export default function PhoneExtensions() {
     selectAllRowsItem: true,
     selectAllRowsItemText: "Todos",
   };
-
-
-
-
 
 const filteredData =
 searchText.length === 0
@@ -115,12 +88,8 @@ searchText.length === 0
                   <Typography
                     variant="h6"
                     gutterBottom
-                    // component="a"
-                    // href="https://bin-ip-checker.p.rapidapi.com"
-                    // target="_blank"
-                    // rel="noopener noreferrer"
                   >
-                    Reporte de extensiones Impulse
+                    Aplicativos e IPs
                   </Typography>
                 </Grid>
                 <Grid xs={6}>
@@ -140,7 +109,7 @@ searchText.length === 0
                     <DataTable
                       columns={columns}
                       data={filteredData}
-                      expandableRows
+                      // expandableRows
                       pagination
                       // title="Index 10"
                       theme={

@@ -7,6 +7,7 @@ import StorageIcon from '@mui/icons-material/Storage';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import GroupIcon from '@mui/icons-material/Group';
 import PhoneEnabledIcon from '@mui/icons-material/PhoneEnabled';
+import ApiIcon from '@mui/icons-material/Api';
 import FmdBadIcon from '@mui/icons-material/FmdBad';
 import AddCardIcon from '@mui/icons-material/AddCard';
 
@@ -21,6 +22,7 @@ const mainListItems = [
   { text: 'Index10', icon: <GroupIcon /> },
   { text: 'Bines', icon: <AddCardIcon /> },
   { text: 'Extensiones', icon: <PhoneEnabledIcon /> },
+  { text: 'IPs', icon: <ApiIcon /> },
   // { text: 'Re etiquetado citibanco', icon: <FmdBadIcon /> },
 ];
 

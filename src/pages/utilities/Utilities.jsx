@@ -5,6 +5,16 @@ import axios from "axios";
 
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Unstable_Grid2";
+
+
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+
+
 import {
   Typography,
   Box,
@@ -38,6 +48,8 @@ export default function Utilities() {
 
   const [query, setQuery] = useState("2445925");
   const [birthDate, setbirthDate] = useState("");
+
+  const [PassTimepad, setPassTimepad] = useState("");
 
   const [words, setWords] = useState(0);
   const [cursorPosition, setCursorPosition] = useState(0);
@@ -129,7 +141,46 @@ export default function Utilities() {
             horizontal: "right",
           },
         });
+        console.log(response.data)
+        
         setbirthDate(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handlePass = async () => {
+    const url = "https://172.20.1.97:3009/api-serv/testOraQuery";
+    const params = {
+      query: ` SELECT OLD_PASSWORD FROM (
+        SELECT OLD_PASSWORD 
+        FROM ASISTENCIA.PASSWORD_ANTERIORES 
+        WHERE USUARIO_ID = (
+                            SELECT ID FROM ASISTENCIA.USUARIOS WHERE ID_USUARIO = ${query}
+                            )
+        ORDER BY FECHA DESC
+    
+    ) WHERE ROWNUM = 1 `,
+      campaign: "0",
+    };
+    try {
+      const response = await axios.post(url, params, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      // console.log(response.status);
+      if (response.status == 200) {
+        const message = "Consulta generada";
+        enqueueSnackbar(message, {
+          variant: "info",
+          anchorOrigin: {
+            vertical: "top",
+            horizontal: "right",
+          },
+        });
+        setPassTimepad(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -310,36 +361,144 @@ export default function Utilities() {
               {/* fin grid container */}
             </Item>
           </Grid>
-cc
-          {/* <Grid xs={6}>
+
+
+
+
+
+
+
+
+
+          <Grid xs={6}>
             <Item>
               <Typography variant="h5" gutterBottom>
-                SMS Impulse
+                Password timepad
               </Typography>
-              <Grid container spacing={3}>
-                <Grid xs={4}>Numero</Grid>
-                
+              <Grid container spacing={8}>
+                <Grid xs={4}>
+                  <Box sx={{ marginBottom: 2 }}>
+                    <TextField
+                      onChange={handleInputDateB}
+                      placeholder="Nomina"
+                      // multiline
+                    />
+                  </Box>
+                </Grid>{" "}
+                {/* fin grid 6 */}
                 <Grid xs={4}>
                   <Box sx={{ marginBottom: 2 }}>
                     <Button
-                      // onClick={handleDate}
+                      onClick={handlePass}
                       variant="success"
                       style={{
-                        background: "#ce93d8",
+                        background: "#43a13b",
                       }}
                     >
-                      Disparar SMS
+                      Consultar
                     </Button>
                   </Box>
                 </Grid>
-                <Grid xs={4}>ss</Grid>
-              </Grid>
+                <Grid xs={4}>
+                  <Box sx={{ marginBottom: 2 }}>
+                    <Box sx={{ marginBottom: 2 }}>
+                      {PassTimepad && PassTimepad.length > 0 ? (
+                        <Typography variant="h6" gutterBottom>
+                          {JSON.stringify(PassTimepad[0].OLD_PASSWORD, null, 2)}
+                        </Typography>
+                      ) : (
+                        <Typography variant="h7">
+                          No data
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                </Grid>
+              </Grid>{" "}
+              {/* fin grid container */}
             </Item>
-          </Grid> */}
+          </Grid>
+          <Grid xs={6}>
+            <Item>
+              <Typography variant="h6">
+                IDs Nomina de prueba
+              </Typography>
+              <p>1682 - Sobre esquema</p>
+              <p>77652 - Sobre dbo</p>
+            </Item>
+          </Grid>          
+          <Grid xs={6}>
+            <Item>
+              <Typography variant="h6">
+                Prefijos
+              </Typography>
+              <p>ITR - 87</p>
+              <p>ITS - 68</p>
+            </Item>
+          </Grid>
+
         </Grid>
+        <EstatusSol />
       </Box>
     </>
   );
 }
 
-// http://172.20.1.95/sms_hsbc/index2.php?numero=4428450036&mensaje=Prueba_hsbc1&campana=998
+
+function createData(name, validando, validavoz, status, comments, razoncancel) {
+  return { name, validando, validavoz, status, comments, razoncancel};
+}
+
+const rows = [
+  createData('Procesada', 2, 0, 'sol ok', 'solicitud capturada ok', 0),
+  createData('Validada', 4, 1, 'validacion ok', 'venta ok', 0),
+  createData('Cancelada', 4, 1, 'validacion ok', 'venta ok', '<> 0'),
+  createData('Guardada', 'null', 0, 'sol grab', 'grabacion', 0),
+];
+
+
+const EstatusSol = () => {
+  return (
+    <Grid xs={12}>
+      <Item>
+        <Typography variant="h5" gutterBottom>
+          ESTATUS DE SOLICITUDES
+        </Typography>
+        <TableContainer >
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>TIPO</TableCell>
+                  <TableCell align="right">VALIDANDO</TableCell>
+                  <TableCell align="right">VALIDAVOZ</TableCell>
+                  <TableCell align="right">STATUS</TableCell>
+                  <TableCell align="right">COMMENTS</TableCell>
+                  <TableCell align="right">RAZONCANCEL</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    key={row.name}
+                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                  >
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell align="right">{row.validando}</TableCell>
+                    <TableCell align="right">{row.validavoz}</TableCell>
+                    <TableCell align="right">{row.status}</TableCell>
+                    <TableCell align="right">{row.comments}</TableCell>
+                    <TableCell align="right">{row.razoncancel}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Item>
+    </Grid>
+
+  )
+}
+
+
